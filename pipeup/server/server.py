@@ -20,6 +20,9 @@ def random_string(size=6, chars=string.ascii_lowercase + string.digits):
 
 
 class WSHandler(tornado.websocket.WebSocketHandler):
+    def check_origin(self, origin):
+        return True
+
     def open(self):
         self.id = uuid.uuid4()
 
