@@ -3,7 +3,7 @@ var Stream = (function() {
     var init, socket;
 
     init = function(key) {
-        socket = new WebSocket("ws://127.0.0.1:8888/ws");
+        socket = new WebSocket("ws://" + document.location.host + "/ws");
 
         socket.onopen = function(event) {
             socket.send(JSON.stringify({action: 'sub', key: key})); 
