@@ -1,0 +1,17 @@
+{
+  "name": "pipeup",
+  "version": "0.0.1",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "tests"
+  ],
+  "dependencies": {
+    "socket.io-client": "~1.3.5",
+    "skeleton": "~2.0.4",
+    "jquery": "~2.1.4",
+    "font-awesome": "~4.3.0"
+  }
+}

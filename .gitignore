@@ -1,0 +1,6 @@
+.DS_Store
+*.py[cod]
+venv/
+bower_components/
+node_modules/
+pipeup/server/static/vendor/

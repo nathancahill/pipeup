@@ -1,0 +1,111 @@
+
+html, body {
+    height: 100%;
+}
+
+pre {
+    margin: 0;
+}
+
+.popup {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 700px;
+    transform: translateY(-50%);
+    margin-left: -350px;
+    background-color: #fff;
+    box-sizing: padding-box;
+    padding: 20px;
+}
+
+.popup .title {
+    text-align: center;
+}
+
+.popup .close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.popup table {
+    padding: 0 20px;
+}
+
+.popup p:last-child {
+    margin-bottom: 0;
+}
+
+.popup code {
+    display: inline-block;
+    margin: 10px 0;
+}
+
+.popup-background {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.popup form, .popup form input {
+    margin-bottom: 0;
+}
+
+.header {
+    width: 100%;
+    height: 60px;
+}
+
+.header .title {
+    float: left;
+    margin: 0px;
+    vertical-align: middle;
+    line-height: 60px;
+    margin-left: 10px;
+}
+
+.header .title a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.header .nav {
+    float: right;
+    height: 100%;
+}
+
+.header .nav a {
+    margin-top: 11px;
+    margin-right: 5px;
+}
+
+.header .nav .github {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.header .nav .github img {
+    width: 38px;
+    height: 38px;
+}
+
+.stream {
+    width: 100%;
+    box-sizing: padding-box;
+    padding: 10px;
+    height: calc(100% - 60px);
+    background-color: #000;
+    color: #fff;
+    font-family: monospace;
+}
+
+.stream pre {
+    width: 100%;
+}

@@ -1,0 +1,24 @@
+
+module.exports = function(grunt) {
+  grunt.initConfig({
+    pkg: grunt.file.readJSON('package.json'),
+    bowercopy: {
+      options: {
+        destPrefix: 'static/vendor'
+      },
+      libs: {
+        files: {
+          'js/socket.io.js': 'socket.io-client/socket.io.js',
+          'js/jquery.js': 'jquery/dist/jquery.js',
+          'css': 'skeleton/css',
+          'css/fontawesome.css': 'font-awesome/css/font-awesome.css',
+          'fonts': 'font-awesome/fonts'
+        }
+      }
+    }
+  });
+
+  grunt.loadNpmTasks('grunt-bowercopy');
+
+  grunt.registerTask('default', ['bowercopy']);
+};
