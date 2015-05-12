@@ -2,7 +2,6 @@ args==0.1.0
 backports.ssl-match-hostname==3.4.0.2
 certifi==2015.4.28
 clint==0.4.1
-pipeup==0.0.1
 pydash==3.2.2
 six==1.9.0
 tornado==4.1
