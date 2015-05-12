@@ -3,10 +3,10 @@ var Stream = (function() {
     var init, socket;
 
     init = function(key) {
-        socket = new WebSocket("ws://" + document.location.host + "/ws");
+        socket = new ReconnectingWebSocket("ws://" + document.location.host + "/ws");
 
         socket.onopen = function(event) {
-            socket.send(JSON.stringify({action: 'sub', key: key})); 
+            socket.send(JSON.stringify({action: "sub", key: key})); 
         };
 
         socket.onmessage = function(event) {
@@ -15,12 +15,10 @@ var Stream = (function() {
             if (message.key === key) {
                 $(".stream pre").append(document.createTextNode(message.msg));                
             }
-        }
-
-        console.log(key);
+        };
     };
 
     return {
         init: init
-    }
+    };
 })();
