@@ -6,7 +6,7 @@ from threading import Thread
 
 from clint import arguments
 from clint.textui import colored, puts
-from websocket import WebSocketApp
+from websocket import WebSocketApp, WebSocketConnectionClosedException
 
 logging.basicConfig()
 
@@ -23,7 +23,7 @@ def on_error(ws, error):
 
 
 def on_close(ws):
-    print 'Lost connection'
+    print 'Lost connection.'
 
 
 def on_open(ws):
@@ -33,6 +33,8 @@ def on_open(ws):
                 line = sys.stdin.readline()
                 ws.send(line)
             except KeyboardInterrupt:
+                break
+            except WebSocketConnectionClosedException:
                 break
 
             if not line.strip():
