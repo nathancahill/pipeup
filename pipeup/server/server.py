@@ -23,14 +23,15 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         return True
 
     def open(self):
+        self.key = None
+        self.ip = self.request.remote_ip
+
         if 'User-Agent' not in self.request.headers:
             self.type = 'client'
             self.key = random_string()
-            self.ip = self.request.remote_ip
+            self.write('connected', SERVER_URL + self.key)
 
-            self.write_message(json.dumps(dict(action='connected', key=self.key, msg=SERVER_URL + self.key)))
-
-            listeners[self.key] = []
+            listeners[self.key] = set()
 
             print 'opening client piping to ' + self.key
         else:
@@ -43,43 +44,49 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             print 'message from client'
 
             if self.key in listeners:
-                for i, listener in enumerate(reversed(listeners[self.key])):
+                for listener in listeners[self.key]:
                     try:
-                        listener.write_message(json.dumps(dict(action='update', key=self.key, msg=message)))
+                        listener.write('update', message)
                     except:
                         listener.close()
-
-                        del listeners[self.key][i]
+                        listeners[self.key].discard(listener)
 
         elif self.type == 'listener':
-            msg = json.loads(message)
+            try:
+                msg = json.loads(message)
+            except:
+                return
 
-            if msg['action'] == 'sub':
+            if msg['action'] == 'sub' and 'key' in msg && len(msg['key']) == 6:
                 print 'adding listener to ' + msg['key']
 
                 self.key = msg['key']
 
                 if self.key in listeners:
-                    listeners[self.key].append(self)
+                    listeners[self.key].add(self)
                 else:
-                    listeners[self.key] = [self]
+                    listeners[self.key] = set([self])
 
     def on_close(self):
         if self.type == 'client':
             print 'closing client'
 
             if self.key in listeners:
-                for i, listener in enumerate(reversed(listeners[self.key])):
+                for listener in listeners[self.key]:
                     try:
-                        listener.write_message(json.dumps(dict(action='close', key=self.key, msg='Client ended stream.\n')))
+                        listener.write('close', 'Client ended stream.\n')
                     except:
                         listener.close()
-
-                        del listeners[self.key][i]
+                        listeners[self.key].discard(listener)
 
         elif self.type == 'listener':
-            # remove listener
+            if self.key in listeners:
+                listeners[self.key].discard(listener)
+
             print 'closing listener'
+
+    def write(self, action, msg):
+        self.write_message(json.dumps(dict(action=action, key=self.key, msg=msg)))
 
 
 class LandingHandler(tornado.web.RequestHandler):
