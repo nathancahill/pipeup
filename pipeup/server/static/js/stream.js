@@ -1,6 +1,6 @@
 
 var Stream = (function() {
-    var init, socket, status, key;
+    var init, socket, status, key, ping;
 
     init = function() {
         status = "connecting";
@@ -10,6 +10,8 @@ var Stream = (function() {
         socket.onopen = function(event) {
             status = "connected";
             socket.send(JSON.stringify({action: "sub", key: key}));
+
+            ping = setInterval(keepalive, 15000);  // 15 seconds
 
             print("Connected.\n");
         };
@@ -29,11 +31,17 @@ var Stream = (function() {
         };
 
         socket.onclose = function(event) {
+            clearInterval(ping);
+
             if (status !== "closed") {
                 print("Lost connection.\n");
                 print("Connecting...\n");
             }
         };
+    };
+
+    keepalive = function() {
+        socket.send(JSON.stringify({action: "ping", key: key}));
     };
 
     print = function(text) {
