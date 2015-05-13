@@ -57,7 +57,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             except:
                 return
 
-            if msg['action'] == 'sub' and 'key' in msg && len(msg['key']) == 6:
+            if msg['action'] == 'sub' and 'key' in msg and len(msg['key']) == 6:
                 print 'adding listener to ' + msg['key']
 
                 self.key = msg['key']
