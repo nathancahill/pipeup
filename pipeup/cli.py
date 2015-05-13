@@ -23,7 +23,8 @@ def on_error(ws, error):
 
 
 def on_close(ws):
-    print 'Lost connection.'
+    puts(colored.red('Lost connection.'))
+    sys.exit()
 
 
 def on_open(ws):
