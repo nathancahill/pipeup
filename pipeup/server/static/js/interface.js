@@ -1,6 +1,6 @@
 
 $(function() {
-    Stream.init(key);
+    Stream.init();
 
     function hidePopup(e) {
         e.preventDefault();

@@ -4,17 +4,14 @@ import string
 import random
 import uuid
 
-import pydash
-
 import tornado.httpserver
 import tornado.websocket
 import tornado.ioloop
 import tornado.web
-import tornado.template
 
 from config import SERVER_URL
 
-streams = dict()
+listeners = dict()
 
 
 def random_string(size=6, chars=string.ascii_lowercase + string.digits):
@@ -26,20 +23,14 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         return True
 
     def open(self):
-        self.id = uuid.uuid4()
-
         if 'User-Agent' not in self.request.headers:
             self.type = 'client'
             self.key = random_string()
+            self.ip = self.request.remote_ip
 
             self.write_message(json.dumps(dict(action='connected', key=self.key, msg=SERVER_URL + self.key)))
 
-            streams[self.id] = dict(
-                key=self.key,
-                source=self,
-                ip=self.request.remote_ip,
-                listeners=[],
-            )
+            listeners[self.key] = []
 
             print 'opening client piping to ' + self.key
         else:
@@ -51,14 +42,14 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         if self.type == 'client':
             print 'message from client'
 
-            if self.id in streams:
-                for i, listener in enumerate(reversed(streams[self.id]['listeners'])):
+            if self.key in listeners:
+                for i, listener in enumerate(reversed(listeners[self.key])):
                     try:
-                        listener.write_message(json.dumps(dict(action='update', key=streams[self.id]['key'], msg=message)))
+                        listener.write_message(json.dumps(dict(action='update', key=self.key, msg=message)))
                     except:
                         listener.close()
 
-                        del streams[self.id]['listeners'][i]
+                        del listeners[self.key][i]
 
         elif self.type == 'listener':
             msg = json.loads(message)
@@ -66,23 +57,25 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             if msg['action'] == 'sub':
                 print 'adding listener to ' + msg['key']
 
-                _streams = pydash.select(streams, dict(key=msg['key']))
+                self.key = msg['key']
 
-                for stream in _streams:
-                    stream['listeners'].append(self)
+                if self.key in listeners:
+                    listeners[self.key].append(self)
+                else:
+                    listeners[self.key] = [self]
 
     def on_close(self):
         if self.type == 'client':
             print 'closing client'
 
-            if self.id in streams:
-                for i, listener in enumerate(reversed(streams[self.id]['listeners'])):
+            if self.key in listeners:
+                for i, listener in enumerate(reversed(listeners[self.key])):
                     try:
-                        listener.write_message(json.dumps(dict(action='close', msg='Client ended stream.\n')))
+                        listener.write_message(json.dumps(dict(action='close', key=self.key, msg='Client ended stream.\n')))
                     except:
                         listener.close()
 
-                        del streams[self.id]['listeners'][i]
+                        del listeners[self.key][i]
 
         elif self.type == 'listener':
             # remove listener
@@ -96,10 +89,8 @@ class LandingHandler(tornado.web.RequestHandler):
 
 class StreamHandler(tornado.web.RequestHandler):
     def get(self, key):
-        self.write(loader.load('stream.html').generate(key=key))
+        self.render('static/html/stream.html')
 
-
-loader = tornado.template.Loader('templates')
 
 application = tornado.web.Application([
     (r'/', LandingHandler),

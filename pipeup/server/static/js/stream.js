@@ -1,16 +1,17 @@
 
 var Stream = (function() {
-    var init, socket, status;
+    var init, socket, status, key;
 
-    init = function(key) {
+    init = function() {
         status = "connecting";
         socket = new ReconnectingWebSocket("ws://" + document.location.host + "/ws");
+        key = document.location.pathname.substring(1, 7);
 
         socket.onopen = function(event) {
             status = "connected";
             socket.send(JSON.stringify({action: "sub", key: key}));
 
-            print("Connected.\n")
+            print("Connected.\n");
         };
 
         socket.onmessage = function(event) {
@@ -32,7 +33,7 @@ var Stream = (function() {
                 print("Lost connection.\n");
                 print("Connecting...\n");
             }
-        }
+        };
     };
 
     print = function(text) {
