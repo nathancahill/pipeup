@@ -81,7 +81,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
         elif self.type == 'listener':
             if self.key in listeners:
-                listeners[self.key].discard(listener)
+                listeners[self.key].discard(self)
 
             print 'closing listener'
 
