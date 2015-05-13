@@ -4,3 +4,4 @@ venv/
 bower_components/
 node_modules/
 pipeup/server/static/vendor/
+pipeup/server/config.py

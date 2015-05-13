@@ -1,4 +1,5 @@
 
+import json
 import sys
 
 from clint import arguments
@@ -11,17 +12,18 @@ def main():
     server = args.get(0)
 
     if not server:
-        server = 'ws://pipeup.io:8888/ws'
+        server = 'ws://pipeup.io/ws'
 
     ws = create_connection(server)
 
     while True:
-        url = ws.recv()
+        msg = ws.recv()
 
-        if url:
+        if msg:
             break
 
-    puts(colored.green('Piping to ' + url))
+    message = json.loads(msg)
+    puts(colored.green('Piping to ' + message['msg']))
 
     while True:
         try:
