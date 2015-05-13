@@ -19,7 +19,7 @@ def on_message(ws, msg):
 
 
 def on_error(ws, error):
-    print error
+    pass
 
 
 def on_close(ws):
