@@ -47,3 +47,7 @@ $ command | pipeup ws://127.0.0.1:8888/ws
 ```
 
 For a more permanent installation, put Tornado behind Nginx using the `nginx.conf` file.
+
+#### Contributing
+
+Pull requests are gladly accepted. Keep it simple.
