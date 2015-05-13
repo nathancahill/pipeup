@@ -12,6 +12,8 @@ import tornado.ioloop
 import tornado.web
 import tornado.template
 
+from config import SERVER_URL
+
 streams = dict()
 
 
@@ -27,8 +29,10 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         self.id = uuid.uuid4()
 
         if 'User-Agent' not in self.request.headers:
+            self.type = 'client'
             self.key = random_string()
-            self.write_message('http://pipeup.io/' + self.key)
+
+            self.write_message(json.dumps(dict(action='connected', key=self.key, msg=SERVER_URL + self.key)))
 
             streams[self.id] = dict(
                 key=self.key,
@@ -37,31 +41,52 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                 listeners=[],
             )
 
-    def on_message(self, message):
-        print streams
-
-        if self.id in streams:
-            for listener in streams[self.id]['listeners']:
-                try:
-                    listener.write_message(json.dumps(dict(key=streams[self.id]['key'], msg=message)))
-                except:
-                    pass
+            print 'opening client piping to ' + self.key
         else:
+            self.type = 'listener'
+
+            print 'opening listener'
+
+    def on_message(self, message):
+        if self.type == 'client':
+            print 'message from client'
+
+            if self.id in streams:
+                for i, listener in enumerate(reversed(streams[self.id]['listeners'])):
+                    try:
+                        listener.write_message(json.dumps(dict(action='update', key=streams[self.id]['key'], msg=message)))
+                    except:
+                        listener.close()
+
+                        del streams[self.id]['listeners'][i]
+
+        elif self.type == 'listener':
             msg = json.loads(message)
-            print msg
 
             if msg['action'] == 'sub':
+                print 'adding listener to ' + msg['key']
+
                 _streams = pydash.select(streams, dict(key=msg['key']))
 
                 for stream in _streams:
                     stream['listeners'].append(self)
 
     def on_close(self):
-        if self.id in streams:
-            for listener in streams[self.id]['listeners']:
-                listener.write_message('Client ended stream')
+        if self.type == 'client':
+            print 'closing client'
 
-        print 'connection closed'
+            if self.id in streams:
+                for i, listener in enumerate(reversed(streams[self.id]['listeners'])):
+                    try:
+                        listener.write_message(json.dumps(dict(action='close', msg='Client ended stream.\n')))
+                    except:
+                        listener.close()
+
+                        del streams[self.id]['listeners'][i]
+
+        elif self.type == 'listener':
+            # remove listener
+            print 'closing listener'
 
 
 class LandingHandler(tornado.web.RequestHandler):

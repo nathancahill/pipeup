@@ -1,21 +1,42 @@
 
 var Stream = (function() {
-    var init, socket;
+    var init, socket, status;
 
     init = function(key) {
+        status = "connecting";
         socket = new ReconnectingWebSocket("ws://" + document.location.host + "/ws");
 
         socket.onopen = function(event) {
-            socket.send(JSON.stringify({action: "sub", key: key})); 
+            status = "connected";
+            socket.send(JSON.stringify({action: "sub", key: key}));
+
+            print("Connected.\n")
         };
 
         socket.onmessage = function(event) {
             message = JSON.parse(event.data);
 
-            if (message.key === key) {
-                $(".stream pre").append(document.createTextNode(message.msg));                
+            if (message.action === "update") {
+                if (message.key === key) {
+                    print(message.msg);                
+                }
+            } else if (message.action === "close") {
+                status = "closed";
+                print(message.msg);
+                socket.close();
             }
         };
+
+        socket.onclose = function(event) {
+            if (status !== "closed") {
+                print("Lost connection.\n");
+                print("Connecting...\n");
+            }
+        }
+    };
+
+    print = function(text) {
+        $(".stream pre").append(document.createTextNode(text));
     };
 
     return {
