@@ -12,6 +12,7 @@ import tornado.web
 from config import SERVER_URL
 
 listeners = dict()
+unbounded = dict()
 
 
 def random_string(size=6, chars=string.ascii_lowercase + string.digits):
@@ -29,11 +30,11 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         if 'User-Agent' not in self.request.headers:
             self.type = 'client'
 
-            print 'opening client'
+            print 'opening client ' + self.ip
         else:
             self.type = 'listener'
 
-            print 'opening listener'
+            print 'opening listener ' + self.ip
 
     def on_message(self, message):
         try:
@@ -49,6 +50,9 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                     self.key = random_string()
 
                 listeners[self.key] = set()
+
+                if self.key in unbounded:
+                    listeners[self.key] = listeners[self.key] | unbounded.pop(self.key)
 
                 self.write('connected', SERVER_URL + self.key)
 
@@ -70,7 +74,10 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                 if self.key in listeners:
                     listeners[self.key].add(self)
                 else:
-                    listeners[self.key] = set([self])
+                    if self.key in unbounded:
+                        unbounded[self.key].add(self)
+                    else:
+                        unbounded[self.key] = set([self])
 
     def on_close(self):
         if self.type == 'client':
