@@ -16,7 +16,7 @@ pre {
     transform: translateY(-50%);
     margin-left: -350px;
     background-color: #fff;
-    box-sizing: padding-box;
+    box-sizing: border-box;
     padding: 20px;
 }
 
@@ -107,7 +107,7 @@ pre {
 
 .stream .scrolling {
     width: 100%;
-    box-sizing: padding-box;
+    box-sizing: border-box;
     padding: 10px;
 }
 
