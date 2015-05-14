@@ -3,21 +3,27 @@ $(function() {
     Stream.init();
 
     function hidePopup(e) {
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
 
         $('.popup').hide();
         $('.popup-background').hide();
     }
 
     function showSignupPopup(e) {
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
 
         $('.popup-signup').show();    
         $('.popup-background').show();    
     }
 
     function showAboutPopup(e) {
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
 
         $('.popup-about').show();    
         $('.popup-background').show();    
@@ -37,4 +43,8 @@ $(function() {
     $('.popup form').bind('submit', function(e) {
         e.preventDefault();
     });
+
+    if (window.location.hash === "#about") {
+        showAboutPopup();
+    }
 });

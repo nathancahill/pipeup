@@ -1,2 +1,2 @@
-clint==0.4.1
+click==4.0
 websocket-client==0.30.0

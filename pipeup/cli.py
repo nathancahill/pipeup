@@ -2,10 +2,11 @@
 import json
 import logging
 import sys
+import time
 from threading import Thread
 
-from clint import arguments
-from clint.textui import colored, puts
+import click
+
 from websocket import WebSocketApp, WebSocketConnectionClosedException
 
 logging.basicConfig()
@@ -15,7 +16,7 @@ def on_message(ws, msg):
     message = json.loads(msg)
 
     if message['action'] == 'connected':
-        puts(colored.green('Piping to ' + message['msg']))
+        click.echo(click.style('Piping to ' + message['msg'], fg='green'))
 
 
 def on_error(ws, error):
@@ -23,16 +24,19 @@ def on_error(ws, error):
 
 
 def on_close(ws):
-    puts(colored.red('Lost connection.'))
-    sys.exit()
+    click.echo(click.style('Lost connection.', fg='red'))
 
 
 def on_open(ws):
-    def run(*args):
+    click.echo(click.style('Connected.', fg='green'))
+
+    def run(key):
+        ws.send(json.dumps(dict(action='request', key=key)))
+
         while True:
             try:
                 line = sys.stdin.readline()
-                ws.send(line)
+                ws.send(json.dumps(dict(action='send', msg=line)))
             except KeyboardInterrupt:
                 break
             except WebSocketConnectionClosedException:
@@ -43,17 +47,30 @@ def on_open(ws):
 
         ws.close()
 
-    Thread(target=run).start()
+    Thread(target=run, args=('aaaaaa',)).start()
 
 
-def main():
-    args = arguments.Args()
-    server = args.get(0)
+@click.command()
+@click.option('--server', default='ws://pipeup.io/ws', help='Websocket URL to pipe to.')
+@click.option('--key', default=None, help='Key on the server to pipe to.')
+def main(server, key):
+    click.echo('')
 
-    if not server:
-        server = 'ws://pipeup.io/ws'
+    for i in range(10):
+        click.echo('Connecting...')
 
-    ws = WebSocketApp(server, on_message=on_message, on_error=on_error, on_close=on_close)
+        try:
+            ws = WebSocketApp(server,
+                              on_message=on_message,
+                              on_error=on_error,
+                              on_close=on_close,
+                              on_open=on_open)
 
-    ws.on_open = on_open
-    ws.run_forever(ping_interval=15)
+            ws.run_forever(ping_interval=15)
+        except:
+            pass
+
+        time.sleep(i * 1.5 + 1.5)
+    else:
+        click.echo(click.style('Failed to reconnect.', fg='red'))
+        sys.exit()

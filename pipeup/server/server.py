@@ -23,40 +23,46 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         return True
 
     def open(self):
-        self.key = None
         self.ip = self.request.remote_ip
 
         if 'User-Agent' not in self.request.headers:
             self.type = 'client'
-            self.key = random_string()
-            self.write('connected', SERVER_URL + self.key)
 
-            listeners[self.key] = set()
-
-            print 'opening client piping to ' + self.key
+            print 'opening client'
         else:
             self.type = 'listener'
 
             print 'opening listener'
 
     def on_message(self, message):
-        if self.type == 'client':
-            print 'message from client'
+        try:
+            msg = json.loads(message)
+        except:
+            return
 
-            if self.key in listeners:
-                for listener in listeners[self.key]:
-                    try:
-                        listener.write('update', message)
-                    except:
-                        listener.close()
-                        listeners[self.key].discard(listener)
+        if self.type == 'client':
+            if msg['action'] == 'request':
+                print 'client requesting key ' + msg['key']
+
+                if msg['key'] not in listeners and len(msg['key']) == 6:
+                    self.key = msg['key']
+                else:
+                    self.key = random_string()
+
+                listeners[self.key] = set()
+
+                self.write('connected', SERVER_URL + self.key)
+
+            elif msg['action'] == 'send':
+                if self.key in listeners:
+                    for listener in listeners[self.key]:
+                        try:
+                            listener.write('update', msg['msg'])
+                        except:
+                            listener.close()
+                            listeners[self.key].discard(listener)
 
         elif self.type == 'listener':
-            try:
-                msg = json.loads(message)
-            except:
-                return
-
             if msg['action'] == 'sub' and 'key' in msg and len(msg['key']) == 6:
                 print 'adding listener to ' + msg['key']
 
@@ -78,6 +84,8 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                     except:
                         listener.close()
                         listeners[self.key].discard(listener)
+
+                listeners.pop(self.key)
 
         elif self.type == 'listener':
             if self.key in listeners:
