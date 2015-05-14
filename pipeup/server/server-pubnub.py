@@ -8,11 +8,15 @@ import tornado.httpserver
 import tornado.websocket
 import tornado.ioloop
 import tornado.web
+from tornado.options import define, options
 
 import redis
 from Pubnub import Pubnub
 
 from config import SERVER_URL, PUBNUB_SUBSCRIBE_KEY, PUBNUB_PUBLISH_KEY
+
+
+define('port', default=8888, help='run on the given port', type=int)
 
 r = redis.StrictRedis()
 pubnub = Pubnub(publish_key=PUBNUB_PUBLISH_KEY, subscribe_key=PUBNUB_SUBSCRIBE_KEY)
@@ -90,6 +94,7 @@ application = tornado.web.Application([
 
 
 if __name__ == "__main__":
+    tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(application, xheaders=True)
-    http_server.listen(8888)
+    http_server.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
