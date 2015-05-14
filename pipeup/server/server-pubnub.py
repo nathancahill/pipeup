@@ -96,5 +96,5 @@ application = tornado.web.Application([
 if __name__ == "__main__":
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(application, xheaders=True)
-    http_server.listen(options.port)
+    http_server.listen(options.port, address='127.0.0.1')
     tornado.ioloop.IOLoop.instance().start()
