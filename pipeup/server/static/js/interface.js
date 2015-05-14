@@ -1,6 +1,11 @@
 
 $(function() {
-    Stream.init();
+    if (window.location.host !== "pipeup.io") {
+        $(".nav .sign-up").hide();
+        Stream.init();
+    } else {
+        StreamPubNub.init();
+    }
 
     function hidePopup(e) {
         if (e) {
@@ -48,9 +53,5 @@ $(function() {
 
     if (window.location.hash === "#about") {
         showAboutPopup();
-    }
-
-    if (window.location.host !== "pipeup.io") {
-        $(".nav .sign-up").hide();
     }
 });
