@@ -46,6 +46,7 @@ var Stream = (function() {
 
     print = function(text) {
         $(".stream pre").append(document.createTextNode(text));
+        $(".stream").get(0).scrollTop = $(".stream").get(0).scrollHeight;
     };
 
     return {

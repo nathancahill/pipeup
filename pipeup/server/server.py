@@ -23,6 +23,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         return True
 
     def open(self):
+        self.key = None
         self.ip = self.request.remote_ip
 
         if 'User-Agent' not in self.request.headers:
@@ -42,9 +43,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
         if self.type == 'client':
             if msg['action'] == 'request':
-                print 'client requesting key ' + msg['key']
-
-                if msg['key'] not in listeners and len(msg['key']) == 6:
+                if msg['key'] and msg['key'] not in listeners and len(msg['key']) == 6:
                     self.key = msg['key']
                 else:
                     self.key = random_string()

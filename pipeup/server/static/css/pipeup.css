@@ -98,14 +98,20 @@ pre {
 
 .stream {
     width: 100%;
-    box-sizing: padding-box;
-    padding: 10px;
     height: calc(100% - 60px);
     background-color: #000;
     color: #fff;
     font-family: monospace;
+    overflow-y: scroll;
+}
+
+.stream .scrolling {
+    width: 100%;
+    box-sizing: padding-box;
+    padding: 10px;
 }
 
 .stream pre {
     width: 100%;
+    overflow-x: hidden;
 }

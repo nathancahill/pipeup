@@ -26,28 +26,30 @@ def on_error(ws, error):
 def on_close(ws):
     click.echo(click.style('Lost connection.', fg='red'))
 
+def wrapper(key):
+    def on_open(ws):
+        click.echo(click.style('Connected.', fg='green'))
 
-def on_open(ws):
-    click.echo(click.style('Connected.', fg='green'))
+        def run(key):
+            ws.send(json.dumps(dict(action='request', key=key)))
 
-    def run(key):
-        ws.send(json.dumps(dict(action='request', key=key)))
+            while True:
+                try:
+                    line = sys.stdin.readline()
+                    ws.send(json.dumps(dict(action='send', msg=line)))
+                except KeyboardInterrupt:
+                    break
+                except WebSocketConnectionClosedException:
+                    break
 
-        while True:
-            try:
-                line = sys.stdin.readline()
-                ws.send(json.dumps(dict(action='send', msg=line)))
-            except KeyboardInterrupt:
-                break
-            except WebSocketConnectionClosedException:
-                break
+                if not line.strip():
+                    break
 
-            if not line.strip():
-                break
+            ws.close()
 
-        ws.close()
+        Thread(target=run, args=(key,)).start()
 
-    Thread(target=run, args=('aaaaaa',)).start()
+    return on_open
 
 
 @click.command()
@@ -64,9 +66,11 @@ def main(server, key):
                               on_message=on_message,
                               on_error=on_error,
                               on_close=on_close,
-                              on_open=on_open)
+                              on_open=wrapper(key))
 
             ws.run_forever(ping_interval=15)
+        except KeyboardInterrupt:
+            break
         except:
             pass
 
