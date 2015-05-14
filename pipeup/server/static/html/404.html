@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>PipeUp</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <link rel="stylesheet" href="/static/vendor/css/normalize.css">
+  <link rel="stylesheet" href="/static/vendor/css/skeleton.css">
+  <link rel="stylesheet" href="/static/vendor/css/fontawesome.css" />
+  <link rel="stylesheet" href="/static/css/pipeup.css">
+
+  <link rel="icon" type="image/png" href="/static/img/favicon.png">
+</head>
+<body>
+  <div class="header">
+    <h5 class="title">
+      <a href="/" title="PipeUp">PipeUp</a>
+    </h5>
+    <div class="nav">
+      <a class="button sign-up" title="Sign Up">Sign Up</a>
+      <a class="github" title="Fork me on Github" href="https://github.com/nathancahill/pipeup" target="_blank">
+        <img alt="Fork me on Github" src="https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png" />
+      </a>
+    </div>
+  </div>
+
+  <div class="stream">
+    <div class="scrolling">
+<pre>404: File not found.</pre>
+    </div>
+  </div>
+
+  <div class="popup-background"></div>
+
+  <div class="popup popup-about">
+    <h5 class="title">PipeUp</h5>
+
+    <a class="close" href="#">
+      <i class="fa fa-times"></i>
+    </a>
+
+    <p>
+      <strong>PipeUp</strong> is a command line tool for piping to a webpage:
+      <br />
+      <code>$ tail -f /var/log/nginx/access.log | pipeup</code>
+      <br /><br />
+      Start using PipeUp by installing the client with pip:
+      <br />
+      <code>$ pip install pipeup</code>
+      <br /><br />
+      Both the PipeUp client and server are MIT licensed and <a href="https://github.com/nathancahill/pipeup" target="_blank">available on Github</a>.
+    </p>
+  </div>
+
+  <div class="popup popup-signup">
+    <h5 class="title">Sign Up</h5>
+
+    <a class="close" href="#">
+      <i class="fa fa-times"></i>
+    </a>
+
+    <p>
+      <strong>PipeUp</strong> is free to use up to 25MB. If you need more, we'll be launching Pro accounts soon.
+      <br />
+      You can also <a href="https://github.com/nathancahill/pipeup" target="_blank">host your own server.</a>
+    </p>
+
+    <table class="u-full-width">
+      <thead>
+        <tr>
+          <th>Free</th>
+          <th>Pro</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>25MB of Data</td>
+          <td>Unlimited Data</td>
+        </tr>
+        <tr>
+          <td>Public Pipes</td>
+          <td>Public and Private Pipes</td>
+        </tr>
+        <tr>
+          <td>1 Pipe per IP Address</td>
+          <td>Unlimited Pipes</td>
+        </tr>
+        <tr>
+          <td>No Combined Pipes</td>
+          <td>Combined Pipes</td>
+        </tr>
+        <tr>
+          <td><strong>$0/month</strong></td>
+          <td><strong>$10/month</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <br />
+
+    <form>
+      <div class="row" style="width: 100%;">
+        <div class="nine columns">
+          <label for="email">Notify me when Pro accounts launch</label>
+          <input class="u-full-width" placeholder="test@mailbox.com" id="email" type="email">
+        </div>
+        <div class="three columns">
+          <label>&nbsp;</label>
+          <input class="button-primary u-full-width" value="Sign Up" type="submit">
+        </div>
+      </div>
+    </form>
+  </div>
+  <script type="text/javascript" src="/static/vendor/js/jquery.js"></script>
+  <script type="text/javascript" src="/static/js/interface.js"></script>
+  <script>
+    $(function() {
+      $('.header .title').click();
+    });
+  </script>
+</body>
+</html>
