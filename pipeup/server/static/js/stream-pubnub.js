@@ -1,47 +1,41 @@
 
 var StreamPubNub = (function() {
-    var init, socket, status, key, ping;
+    var init, socket, status, key;
 
     init = function() {
         status = "connecting";
         key = document.location.pathname.substring(1, 7);
+        socket = new PUBNUB.ws("ws://pubsub.pubnub.com/nopublickey/sub-c-a78d8cc0-fa74-11e4-8519-0619f8945a4f/" + key);
 
-        pubnub = PUBNUB.init({
-            origin: 'pubsub.pubnub.com',
-            subscribe_key: 'sub-c-a78d8cc0-fa74-11e4-8519-0619f8945a4f'
-        });
+        socket.onopen = function(event) {
+            status = "connected";
+            print("Connected.\n");
+        };
 
-        pubnub.subscribe({
-            channel: key,
-            restore: true,
-            message: function(message, env, channdl) {
-                message = JSON.parse(message);
+        socket.onmessage = function(event) {
+            message = JSON.parse(event.data);
 
-                if (message.action === "update") {
-                    if (message.key === key) {
-                        print(message.msg);
-                    }
-                } else if (message.action === "close") {
-                    status = "closed";
-                    print(message.msg);
-
-                    pubnub.unsubscribe({
-                        channel: key
-                    });
+            if (message.action === "update") {
+                if (message.key === key) {
+                    print(message.msg);                
                 }
-            },
-            connect: function() {
-                status = "connected";
-                print("Connected.\n");
-            },
-            reconnect: function() {
-                print("Connected.\n");
-            },
-            disconnect: function() {
+            } else if (message.action === "close") {
+                status = "closed";
+                print(message.msg);
+                socket.close();
+            }
+        };
+
+        socket.onclose = function(event) {
+            if (status !== "closed") {
                 print("Lost connection.\n");
                 print("Connecting...\n");
             }
-        });
+        };
+    };
+
+    keepalive = function() {
+        socket.send(JSON.stringify({action: "ping", key: key}));
     };
 
     print = function(text) {
