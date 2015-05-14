@@ -47,4 +47,8 @@ $(function() {
     if (window.location.hash === "#about") {
         showAboutPopup();
     }
+
+    if (window.location.host !== "pipeup.io") {
+        $(".nav .sign-up").hide();
+    }
 });
