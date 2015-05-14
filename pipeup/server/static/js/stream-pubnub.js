@@ -7,7 +7,7 @@ var StreamPubNub = (function() {
         key = document.location.pathname.substring(1, 7);
 
         pubnub = PUBNUB.init({
-            origin: '',
+            origin: 'pubsub.pubnub.com',
             subscribe_key: 'sub-c-a78d8cc0-fa74-11e4-8519-0619f8945a4f'
         });
 
