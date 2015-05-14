@@ -2,9 +2,14 @@
 $(function() {
     if (window.location.host !== "pipeup.io") {
         $(".nav .sign-up").hide();
-        Stream.init();
+
+        if (typeof Stream !== 'undefined') {
+            Stream.init();
+        }
     } else {
-        StreamPubNub.init();
+        if (typeof StreamPubNub !== 'undefined') {
+            StreamPubNub.init();
+        }
     }
 
     function hidePopup(e) {
