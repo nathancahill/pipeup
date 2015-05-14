@@ -10,6 +10,7 @@ module.exports = function(grunt) {
         files: {
           'js/jquery.js': 'jquery/dist/jquery.js',
           'js/reconnecting-websocket.js': 'reconnectingWebsocket/reconnecting-websocket.js',
+          'js/pubnub.js': 'pubnub/web/pubnub.js',
           'css': 'skeleton/css',
           'css/fontawesome.css': 'font-awesome/css/font-awesome.css',
           'fonts': 'font-awesome/fonts'
