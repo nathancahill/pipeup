@@ -16,7 +16,7 @@ $ pip install pipeup
 
 #### Usage
 
-Pipe the output of a command to `pipeup`.
+Pipe the output of a command to `pipeup`. See available options by running `pipeup --help`
 
 ```
 $ command | pipeup
@@ -43,7 +43,7 @@ $ python server.py
 To use the `pipeup` client with your server, add the websocket URL as the first parameter of the command:
 
 ```
-$ command | pipeup ws://127.0.0.1:8888/ws
+$ command | pipeup --server ws://127.0.0.1:8888/ws
 ```
 
 For a more permanent installation, put Tornado behind Nginx using the `nginx.conf` file.
