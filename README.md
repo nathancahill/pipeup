@@ -51,7 +51,3 @@ For a more permanent installation, put Tornado behind Nginx using the `nginx.con
 #### Contributing
 
 Pull requests are gladly accepted. Keep it simple.
-
-#### Todo
-
-- [ ] Support multiple Tornado processes with Redis Pub-Sub
