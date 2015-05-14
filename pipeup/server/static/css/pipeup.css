@@ -115,3 +115,16 @@ pre {
     width: 100%;
     overflow-x: hidden;
 }
+
+@media (max-width: 600px) {
+  .popup {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    margin-left: 0;
+    transform: none;
+    padding: 10px;
+  }
+}
