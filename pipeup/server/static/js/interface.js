@@ -42,6 +42,8 @@ $(function() {
 
     $('.popup form').bind('submit', function(e) {
         e.preventDefault();
+
+        $.post("/signup", {email: $("#email").val()});
     });
 
     if (window.location.hash === "#about") {
