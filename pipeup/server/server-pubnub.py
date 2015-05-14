@@ -9,12 +9,12 @@ import tornado.websocket
 import tornado.ioloop
 import tornado.web
 
+import redis
 from Pubnub import Pubnub
 
 from config import SERVER_URL, PUBNUB_SUBSCRIBE_KEY, PUBNUB_PUBLISH_KEY
 
-active_keys = set()
-
+r = redis.StrictRedis()
 pubnub = Pubnub(publish_key=PUBNUB_PUBLISH_KEY, subscribe_key=PUBNUB_SUBSCRIBE_KEY)
 
 
@@ -49,12 +49,12 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
         if self.type == 'client':
             if msg['action'] == 'request':
-                if msg['key'] and msg['key'] not in active_keys and len(msg['key']) == 6:
+                if msg['key'] and not r.sismember('pipes', msg['key']) and len(msg['key']) == 6:
                     self.key = msg['key']
                 else:
                     self.key = random_string()
 
-                active_keys.add(self.key)
+                r.sadd('pipes', self.key)
                 self.write('connected', SERVER_URL + self.key)
 
             elif msg['action'] == 'send':
@@ -65,7 +65,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             print 'closing client'
 
             pubnub_write(self.key, 'close', 'Client ended stream.\n')
-            active_keys.discard(self.key)
+            r.srem('pipes', self.key)
 
     def write(self, action, msg):
         self.write_message(json.dumps(dict(action=action, key=self.key, msg=msg)))
