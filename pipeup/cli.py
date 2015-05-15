@@ -21,7 +21,7 @@ def on_message(ws, msg):
         click.echo(click.style('Piping to ' + message['msg'], fg='green'))
     elif message['action'] == 'limited':
         click.echo(click.style(message['msg'], fg='red'))
-        thread.interrupt_main()
+        os._exit(1)
 
 
 def on_error(ws, error):
