@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='pipeup',
-    version='0.1.6',
+    version='0.1.7',
     packages=['pipeup'],
     install_requires=['click', 'websocket-client'],
     extras_require={
@@ -13,7 +13,7 @@ setup(
     entry_points={
         'console_scripts': ['pipeup=pipeup.cli:main'],
     },
-    download_url='https://github.com/nathancahill/pipeup/tarball/0.1.6',
+    download_url='https://github.com/nathancahill/pipeup/tarball/0.1.7',
     author='Nathan Cahill',
     author_email='nathan@nathancahill.com',
     url='http://github.com/nathancahill/pipeup',
