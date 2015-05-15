@@ -75,8 +75,6 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
             if not self.pro and self.lines >= LINES_LIMIT:
                 self.write('limited', 'You hit the 2,000 line limit. Please upgrade your account.')
-                self.close()
-
                 pubnub_write(self.key, 'limited', 'You hit the 2,000 line limit. Please upgrade your account.\n')
             else:
                 pubnub_write(self.key, 'update', msg['msg'])
@@ -89,7 +87,10 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         r.srem('pipes', self.key)
 
     def write(self, action, msg):
-        self.write_message(json.dumps(dict(action=action, key=self.key, msg=msg)))
+        try:
+            self.write_message(json.dumps(dict(action=action, key=self.key, msg=msg)))
+        except:
+            pass
 
 
 class SignupHandler(tornado.web.RequestHandler):
