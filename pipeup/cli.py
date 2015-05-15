@@ -49,7 +49,7 @@ def wrapper(key):
                     break
 
                 if not line.strip():
-                    break
+                    thread.interrupt_main()
 
             ws.close()
 
@@ -88,4 +88,5 @@ def main(server, key):
         time.sleep(i * 1.5 + 1.5)
     else:
         click.echo(click.style('Failed to reconnect.', fg='red'))
-        os._exit(1)
+
+    os._exit(1)
