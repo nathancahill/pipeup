@@ -29,12 +29,12 @@ def on_error(ws, error):
 
 
 def on_close(ws):
-    click.echo(click.style('Lost connection.', fg='red'))
+    click.echo(click.style('Lost connection.    ', fg='red'))
 
 
 def wrapper(key):
     def on_open(ws):
-        click.echo(click.style('Connected.', fg='green'))
+        click.echo(click.style('Connected.          ', fg='green'))
 
         def run(key):
             ws.send(json.dumps(dict(action='request', key=key)))
@@ -70,7 +70,7 @@ def validate_key(ctx, param, value):
 @click.option('--key', default=None, callback=validate_key, help='6 character alphanumeric key to pipe to.')
 def main(server, key):
     for i in range(10):
-        sys.stdout.write('Connecting...\r')
+        sys.stdout.write('Connecting...       \r')
         sys.stdout.flush()
 
         try:
