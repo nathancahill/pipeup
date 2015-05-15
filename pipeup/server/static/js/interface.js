@@ -39,6 +39,15 @@ $(function() {
         $('.popup-background').show();    
     }
 
+    function showThanksPopup(e) {
+        if (e) {
+            e.preventDefault();
+        }
+
+        $('.popup-thanks').show();    
+        $('.popup-background').show();    
+    }
+
     $(document).bind('keyup', function(e) {
         if (e.which === 27) {
             hidePopup(e);
@@ -52,8 +61,9 @@ $(function() {
 
     $('.popup form').bind('submit', function(e) {
         e.preventDefault();
-
         $.post("/signup", {email: $("#email").val()});
+        hidePopup();
+        showThanksPopup(e);
     });
 
     if (window.location.hash === "#about") {
