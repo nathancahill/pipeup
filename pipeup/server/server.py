@@ -2,7 +2,6 @@
 import json
 import string
 import random
-import uuid
 
 import tornado.httpserver
 import tornado.websocket
@@ -103,18 +102,12 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         self.write_message(json.dumps(dict(action=action, key=self.key, msg=msg)))
 
 
-class LandingHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write('Hello, world')
-
-
 class StreamHandler(tornado.web.RequestHandler):
     def get(self, key):
         self.render('static/html/stream.html')
 
 
 application = tornado.web.Application([
-    (r'/', LandingHandler),
     (r'/ws', WSHandler),
     (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': 'static'}),
     (r'/(.*)', StreamHandler),
