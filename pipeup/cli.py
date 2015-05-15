@@ -70,7 +70,8 @@ def validate_key(ctx, param, value):
 @click.option('--key', default=None, callback=validate_key, help='6 character alphanumeric key to pipe to.')
 def main(server, key):
     for i in range(10):
-        click.echo('Connecting...')
+        sys.stdout.write('Connecting...\r')
+        sys.stdout.flush()
 
         try:
             ws = WebSocketApp(server,
