@@ -43,7 +43,9 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
         if self.type == 'client':
             if msg['action'] == 'request':
-                if msg['key'] and msg['key'] not in listeners and len(msg['key']) == 6:
+                if msg['key'] and len(msg['key']) == 6 and \
+                                  msg['key'].isalnum() and \
+                                  msg['key'] not in listeners:
                     self.key = msg['key']
                 else:
                     self.key = random_string()

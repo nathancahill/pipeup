@@ -54,9 +54,12 @@ def wrapper(key):
 
 @click.command()
 @click.option('--server', default='ws://pipeup.io/ws', help='Websocket URL to pipe to.')
-@click.option('--key', default=None, help='Key on the server to pipe to.')
+@click.option('--key', default=None, help='6 character alphanumeric key to pipe to.')
 def main(server, key):
-    click.echo('')
+    if key and (len(msg['key']) != 6 or not msg['key'].isalnum()):
+        key = None
+
+        click.echo('Key must be 6 character alphanumeric. Using key from server.')
 
     for i in range(10):
         click.echo('Connecting...')

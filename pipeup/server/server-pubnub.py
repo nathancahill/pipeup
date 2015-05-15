@@ -52,7 +52,9 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
         if self.type == 'client':
             if msg['action'] == 'request':
-                if msg['key'] and not r.sismember('pipes', msg['key']) and len(msg['key']) == 6:
+                if msg['key'] and len(msg['key']) == 6 and \
+                                  msg['key'].isalnum() and \
+                                  not r.sismember('pipes', msg['key']):
                     self.key = msg['key']
                 else:
                     self.key = random_string()
