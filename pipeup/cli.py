@@ -1,8 +1,10 @@
 
 import json
 import logging
+import os
 import sys
 import time
+import thread
 from threading import Thread
 
 import click
@@ -19,6 +21,7 @@ def on_message(ws, msg):
         click.echo(click.style('Piping to ' + message['msg'], fg='green'))
     elif message['action'] == 'limited':
         click.echo(click.style(message['msg'], fg='red'))
+        thread.interrupt_main()
 
 
 def on_error(ws, error):
@@ -85,4 +88,4 @@ def main(server, key):
         time.sleep(i * 1.5 + 1.5)
     else:
         click.echo(click.style('Failed to reconnect.', fg='red'))
-        sys.exit()
+        os._exit(1)
