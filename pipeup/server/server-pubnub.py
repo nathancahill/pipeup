@@ -59,7 +59,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                     self.key = random_string()
 
                 r.sadd('pipes', self.key)
-                r.lpush(self.ip + ' - ' + self.key + ' - ' + datetime.datetime.now().isoformat())
+                r.lpush('log', self.ip + ' - ' + self.key + ' - ' + datetime.datetime.now().isoformat())
 
                 self.write('connected', SERVER_URL + self.key)
 
