@@ -52,15 +52,17 @@ def wrapper(key):
     return on_open
 
 
+def validate_key(ctx, param, value):
+    if len(value) != 6 or not value.isalnum():
+        raise click.BadParameter('key must be 6 character alphanumeric')
+    else:
+        return value
+
+
 @click.command()
 @click.option('--server', default='ws://pipeup.io/ws', help='Websocket URL to pipe to.')
-@click.option('--key', default=None, help='6 character alphanumeric key to pipe to.')
+@click.option('--key', default=None, callback=validate_key, help='6 character alphanumeric key to pipe to.')
 def main(server, key):
-    if key and (len(msg['key']) != 6 or not msg['key'].isalnum()):
-        key = None
-
-        click.echo('Key must be 6 character alphanumeric. Using key from server.')
-
     for i in range(10):
         click.echo('Connecting...')
 
