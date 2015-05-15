@@ -44,7 +44,7 @@ def wrapper(key):
                     line = sys.stdin.readline()
                     ws.send(json.dumps(dict(action='send', msg=line)))
                 except KeyboardInterrupt:
-                    break
+                    thread.interrupt_main()
                 except WebSocketConnectionClosedException:
                     break
 
