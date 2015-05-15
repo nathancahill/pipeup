@@ -17,6 +17,8 @@ def on_message(ws, msg):
 
     if message['action'] == 'connected':
         click.echo(click.style('Piping to ' + message['msg'], fg='green'))
+    elif message['action'] == 'limited':
+        click.echo(click.style(message['msg'], fg='red'))
 
 
 def on_error(ws, error):

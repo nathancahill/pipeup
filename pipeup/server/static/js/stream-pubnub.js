@@ -23,6 +23,12 @@ var StreamPubNub = (function() {
                 status = "closed";
                 print(message.msg);
                 socket.close();
+            } else if (message.action === "limited") {
+                status = "closed";
+                print(message.msg);
+                socket.close();
+
+                $('.sign-up').click();
             }
         };
 

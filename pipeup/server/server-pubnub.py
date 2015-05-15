@@ -13,7 +13,7 @@ from tornado.options import define, options
 import redis
 from Pubnub import Pubnub
 
-from config import SERVER_URL, PUBNUB_SUBSCRIBE_KEY, PUBNUB_PUBLISH_KEY
+from config import SERVER_URL, LINES_LIMIT, PUBNUB_SUBSCRIBE_KEY, PUBNUB_PUBLISH_KEY
 
 
 define('port', default=8888, help='run on the given port', type=int)
@@ -37,6 +37,8 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         self.key = None
         self.ip = self.request.remote_ip
+        self.lines = 0
+        self.pro = False
 
         if 'User-Agent' not in self.request.headers:
             self.type = 'client'
@@ -49,27 +51,40 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         except:
             return
 
-        if self.type == 'client':
-            if msg['action'] == 'request':
-                if msg['key'] and len(msg['key']) == 6 and \
-                                  msg['key'].isalnum() and \
-                                  not r.sismember('pipes', msg['key']):
-                    self.key = msg['key']
-                else:
-                    self.key = random_string()
+        if self.type != 'client':
+            return
 
-                r.sadd('pipes', self.key)
-                r.lpush('log', self.ip + ' - ' + self.key + ' - ' + datetime.datetime.now().isoformat())
+        if msg['action'] == 'request':
+            if msg['key'] and len(msg['key']) == 6 and \
+                              msg['key'].isalnum() and \
+                              not r.sismember('pipes', msg['key']):
+                self.key = msg['key']
+            else:
+                self.key = random_string()
 
-                self.write('connected', SERVER_URL + self.key)
+            r.sadd('pipes', self.key)
+            r.lpush('log', self.ip + ' - ' + self.key + ' - ' + datetime.datetime.now().isoformat())
 
-            elif msg['action'] == 'send':
+            if r.sismember('pro', msg['key']):
+                self.pro = True
+
+            self.write('connected', SERVER_URL + self.key)
+
+        elif msg['action'] == 'send':
+            self.lines += 1
+
+            if not self.pro and self.lines >= LINES_LIMIT:
+                self.write(self.key, 'limited', 'You hit the 2,000 line limit. Please upgrade your account.')
+                pubnub_write(self.key, 'limited', 'You hit the 2,000 line limit. Please upgrade your account.')
+            else:
                 pubnub_write(self.key, 'update', msg['msg'])
 
     def on_close(self):
-        if self.type == 'client':
-            pubnub_write(self.key, 'close', 'Client ended stream.\n')
-            r.srem('pipes', self.key)
+        if self.type != 'client':
+            return
+
+        pubnub_write(self.key, 'close', 'Client ended stream.\n')
+        r.srem('pipes', self.key)
 
     def write(self, action, msg):
         self.write_message(json.dumps(dict(action=action, key=self.key, msg=msg)))
