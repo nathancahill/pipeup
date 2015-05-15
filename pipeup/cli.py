@@ -54,7 +54,7 @@ def wrapper(key):
 
 
 def validate_key(ctx, param, value):
-    if len(value) != 6 or not value.isalnum():
+    if value and (len(value) != 6 or not value.isalnum()):
         raise click.BadParameter('key must be 6 character alphanumeric')
     else:
         return value
