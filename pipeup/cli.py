@@ -26,6 +26,7 @@ def on_error(ws, error):
 def on_close(ws):
     click.echo(click.style('Lost connection.', fg='red'))
 
+
 def wrapper(key):
     def on_open(ws):
         click.echo(click.style('Connected.', fg='green'))

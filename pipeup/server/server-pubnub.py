@@ -1,4 +1,5 @@
 
+import datetime
 import json
 import string
 import random
@@ -39,8 +40,6 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
         if 'User-Agent' not in self.request.headers:
             self.type = 'client'
-
-            print 'opening client ' + self.ip
         else:
             self.type = 'listener'
 
@@ -60,6 +59,8 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                     self.key = random_string()
 
                 r.sadd('pipes', self.key)
+                r.lpush(self.ip + ' - ' + self.key + ' - ' + datetime.datetime.now().isoformat())
+
                 self.write('connected', SERVER_URL + self.key)
 
             elif msg['action'] == 'send':
@@ -67,8 +68,6 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
     def on_close(self):
         if self.type == 'client':
-            print 'closing client'
-
             pubnub_write(self.key, 'close', 'Client ended stream.\n')
             r.srem('pipes', self.key)
 
