@@ -37,13 +37,18 @@ pre {
     padding: 0 20px;
 }
 
-.popup p:last-child {
-    margin-bottom: 0;
-}
-
 .popup code {
     display: inline-block;
     margin: 10px 0;
+}
+
+.popup code a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.popup p {
+    margin-bottom: 0;
 }
 
 .popup-background {
